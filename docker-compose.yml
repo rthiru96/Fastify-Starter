@@ -1,0 +1,31 @@
+version: '3'
+services:
+  fastify-typescript-prisma-app:
+    container_name: fastify-typescript-prisma-app
+    build: .
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - EXTERNAL_PORT=$SERVER_PORT
+      - PGUSER=$DB_USER
+      - PGPASSWORD=$DB_PASSWORD
+      - PGDATABASE=$DB_NAME
+      - PGHOST=fastify-typescript-prisma-db # NAME OF THE SERVICE
+    depends_on:
+      - fastify-typescript-prisma-db
+    command: yarn start:dev
+  fastify-typescript-prisma-db:
+    container_name: fastify-typescript-prisma-db
+    image: postgres:12
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
+volumes:
+  db-data:
